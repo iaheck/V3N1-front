@@ -6,6 +6,7 @@ import Rating from "@mui/material/Rating";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import { useEffect, useState } from "react";
 import UserRating from "./UserRating";
 import Loader from "../common/Loader";
 
@@ -16,6 +17,20 @@ function ResourceInformation({ resourceId }) {
     error,
   } = useOperation("getResource", resourceId);
 
+  const [average, setAverage] = useState(undefined);
+
+  function FloatAverage(textAverage) {
+    const evaluation =
+      textAverage === null ? null : parseFloat(textAverage.slice(0, 3));
+    return evaluation;
+  }
+
+  useEffect(() => {
+    if (resource) {
+      setAverage(FloatAverage(resource.average_evaluation));
+    }
+  }, [resource]);
+
   if (loading) {
     return <Loader />;
   }
@@ -23,10 +38,6 @@ function ResourceInformation({ resourceId }) {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-
-  const evaluation = resource.average_evaluation;
-  const average =
-    evaluation === null ? null : parseFloat(evaluation.slice(0, 3));
 
   return (
     <Card>
@@ -53,7 +64,7 @@ function ResourceInformation({ resourceId }) {
 
         <Typography component="div">Your evaluation</Typography>
 
-        <UserRating resourceId={resourceId} />
+        <UserRating resourceId={resourceId} onChangeAverage={setAverage} />
       </CardContent>
     </Card>
   );

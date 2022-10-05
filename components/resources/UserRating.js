@@ -3,14 +3,13 @@ import { useEffect, useState } from "react";
 import Rating from "@mui/material/Rating";
 import Loader from "../common/Loader";
 
-function UserRating({ resourceId }) {
+function UserRating({ resourceId, onChangeAverage }) {
   const { loading, data: resourceEvaluation } = useOperation(
     "getResourceEvaluation",
     resourceId
   );
 
   const [setResourceEvaluation] = useOperationMethod("setResourceEvaluation");
-
   const [rating, setRating] = useState(undefined);
 
   useEffect(() => {
@@ -19,13 +18,22 @@ function UserRating({ resourceId }) {
     }
   }, [resourceEvaluation]);
 
+  const [getResource, { data: resource }] = useOperationMethod("getResource");
+
+  useEffect(() => {
+    if (resource) {
+      onChangeAverage(parseFloat(resource.average_evaluation.slice(0, 3)));
+    }
+  }, [resource, onChangeAverage]);
+
   if (loading) {
     return <Loader />;
   }
 
-  const handleChange = (_event, newValue) => {
-    setResourceEvaluation(resourceId, { evaluation: newValue });
+  const handleChange = async (_event, newValue) => {
+    await setResourceEvaluation(resourceId, { evaluation: newValue });
     setRating(newValue);
+    getResource(resourceId);
   };
 
   return (
