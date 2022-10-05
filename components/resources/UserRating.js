@@ -1,13 +1,13 @@
 import { useOperation, useOperationMethod } from "react-openapi-client";
 import { useEffect, useState } from "react";
 import Rating from "@mui/material/Rating";
+import Loader from "../common/Loader";
 
 function UserRating({ resourceId }) {
-  const {
-    loading,
-    data: resourceEvaluation,
-    error,
-  } = useOperation("getResourceEvaluation", resourceId);
+  const { loading, data: resourceEvaluation } = useOperation(
+    "getResourceEvaluation",
+    resourceId
+  );
 
   const [setResourceEvaluation] = useOperationMethod("setResourceEvaluation");
 
@@ -20,17 +20,12 @@ function UserRating({ resourceId }) {
   }, [resourceEvaluation]);
 
   if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
+    return <Loader />;
   }
 
   const handleChange = (_event, newValue) => {
     setResourceEvaluation(resourceId, { evaluation: newValue });
     setRating(newValue);
-    window.location.reload(false);
   };
 
   return (

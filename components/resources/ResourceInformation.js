@@ -6,8 +6,8 @@ import Rating from "@mui/material/Rating";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import { Box, CircularProgress } from "@mui/material";
 import UserRating from "./UserRating";
+import Loader from "../common/Loader";
 
 function ResourceInformation({ resourceId }) {
   const {
@@ -17,18 +17,16 @@ function ResourceInformation({ resourceId }) {
   } = useOperation("getResource", resourceId);
 
   if (loading) {
-    return (
-      <Box sx={{ display: "flex" }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <Loader />;
   }
 
   if (error) {
     return <div>Error: {error.message}</div>;
   }
 
-  const average = parseFloat(String(resource.average_evaluation).slice(0, 3));
+  const evaluation = resource.average_evaluation;
+  const average =
+    evaluation === null ? null : parseFloat(evaluation.slice(0, 3));
 
   return (
     <Card>
