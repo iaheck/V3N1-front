@@ -20,9 +20,10 @@ function ResourceInformation({ resourceId }) {
   const [average, setAverage] = useState(undefined);
 
   function FloatAverage(textAverage) {
-    const evaluation =
-      textAverage === null ? null : parseFloat(textAverage.slice(0, 3));
-    return evaluation;
+    if (textAverage === null) {
+      return textAverage;
+    }
+    return parseFloat(textAverage.slice(0, 3));
   }
 
   useEffect(() => {
@@ -36,7 +37,7 @@ function ResourceInformation({ resourceId }) {
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div> Error </div>;
   }
 
   return (
